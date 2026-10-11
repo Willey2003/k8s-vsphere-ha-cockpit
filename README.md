@@ -115,13 +115,24 @@ External etcd metrics are opt-in: run `scripts/etcd-client-secret.sh` on a contr
 | All Helm charts and manifests | `helm template` and `kubeconform` against Kubernetes 1.33 + CRD schemas (CI) |
 | Scripts | `bash -n` and `shellcheck` (CI) |
 
+| **Verified on a real cluster** | first install, Oct 2026 |
+|---|---|
+| Install end to end | kubeadm 1.32, 3 managers + 4 workers, CRI-O, Calico, MetalLB, external etcd, with another Prometheus stack and Gateway API already present |
+| Istio 1.30.5 sidecar mesh, Gateway API Gateway served by Istio | Gateway programmed, 7 routes accepted, address from MetalLB |
+| Kiali, Jaeger, Prometheus, Grafana wiring | Kiali reports Prometheus, Grafana and Jaeger reachable; Jaeger holds traces for frontend, catalog and pricing |
+| kube-hostfail in demo mode, as a pod, scraped by Prometheus | `hostfail_single_points_of_failure` present |
+
 | **Not yet verified** | |
 |---|---|
-| A full install on a real cluster | the build environment cannot run Kubernetes nodes; first real run is on your cluster. Start with `00-preflight.sh`. |
-| Kiali to Jaeger/Prometheus wiring, Envoy metric scraping, Gateway programming under Istio | follows the Istio/Kiali docs but untested live |
-| Behaviour against a real vCenter | the API calls are exercised against `vcsim`, which is not byte-for-byte vCenter |
+| `HOSTFAIL_MODE=live` against a real vCenter | the API calls are exercised against `vcsim`, which is not byte-for-byte vCenter |
+| Uninstall script on a real cluster | `bash -n` and `shellcheck` only |
 
-If something fails on a real cluster, the cause is most likely in the unverified list; please open an issue with the output of `00-preflight.sh` and `40-verify.sh`.
+Problems the first real run found, now fixed: node-exporter host port clashed with an existing stack on 9100
+(ours now uses 9101); Grafana metrics are scraped on `/grafana/metrics`; the ghcr image tag must be lowercase.
+Known caveat: if a host firewall blocks port 9101 between nodes, those node-exporter targets show DOWN.
+Our Prometheus selects ServiceMonitors in every namespace, so it will also scrape another stack's targets
+(read-only extra load). If something fails on your cluster, please open an issue with the output of
+`00-preflight.sh` and `40-verify.sh`.
 
 ## Model and limits of the simulation
 
