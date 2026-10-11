@@ -33,6 +33,8 @@ prometheus:
       limits: {memory: 2Gi}
 
 grafana:
+  serviceMonitor:
+    path: /grafana/metrics   # Grafana is served from a sub-path, so /metrics would redirect to root_url
   admin:
     existingSecret: cockpit-grafana-admin
     userKey: admin-user
