@@ -67,5 +67,9 @@ kube-state-metrics:
     requests: {cpu: 20m, memory: 64Mi}
 
 prometheus-node-exporter:
+  # own port: another Prometheus stack (hostNetwork on 9100) is common on lab clusters
+  service:
+    port: 9101
+    targetPort: 9101
   resources:
     requests: {cpu: 20m, memory: 32Mi}

@@ -22,7 +22,9 @@ if [ -n "$tj" ]; then
 import sys, json, collections
 d = json.load(sys.stdin)["data"]["activeTargets"]
 c = collections.Counter((t["labels"].get("job","?"), t["health"]) for t in d)
-for (job, h), n in sorted(c.items()): print(f"  {\"ok  \" if h==\"up\" else \"DOWN\"} {job}: {n} {h}")
+for (job, h), n in sorted(c.items()):
+    flag = "ok  " if h == "up" else "DOWN"
+    print("  %s %s: %d %s" % (flag, job, n, h))
 down = [t["scrapeUrl"] for t in d if t["health"] != "up"]
 sys.exit(1 if down else 0)' || fail=1
 else
