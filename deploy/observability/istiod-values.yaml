@@ -1,0 +1,13 @@
+# istiod (sidecar mode). Only namespaces you label istio-injection=enabled are affected.
+pilot:
+  resources:
+    requests: {cpu: 100m, memory: 256Mi}
+meshConfig:
+  enableTracing: true
+  extensionProviders:
+    - name: jaeger
+      zipkin:
+        service: jaeger-collector.istio-system.svc.cluster.local
+        port: 9411
+  defaultConfig:
+    holdApplicationUntilProxyStarts: true

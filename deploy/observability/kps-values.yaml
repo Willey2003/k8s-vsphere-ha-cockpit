@@ -1,0 +1,71 @@
+# kube-prometheus-stack values for a kubeadm cluster on VMs. Chart 92.x.
+fullnameOverride: kps
+
+# kubeadm binds these to 127.0.0.1, so scraping them yields permanently-red targets.
+# Switched off rather than "fixed" by editing the control plane.
+kubeControllerManager: {enabled: false}
+kubeScheduler:         {enabled: false}
+kubeProxy:             {enabled: false}
+kubeEtcd:              {enabled: false}      # opt in with ETCD_METRICS=true (external etcd needs client certs)
+
+defaultRules:
+  rules:
+    etcd: false                             # these alert on the targets disabled above
+    kubeControllerManager: false
+    kubeSchedulerAlerting: false
+    kubeProxy: false
+
+alertmanager:
+  enabled: false                            # alerts show in Prometheus/Grafana; enable + route if you want notifications
+
+prometheus:
+  prometheusSpec:
+    externalUrl: /prometheus
+    routePrefix: /prometheus
+    retention: 7d
+    # pick up OUR ServiceMonitors/PodMonitors/rules from any namespace (Istio, kube-hostfail), not only this release's
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    resources:
+      requests: {cpu: 200m, memory: 900Mi}
+      limits: {memory: 2Gi}
+
+grafana:
+  admin:
+    existingSecret: cockpit-grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  grafana.ini:
+    server:
+      root_url: "%(protocol)s://%(domain)s/grafana/"
+      serve_from_sub_path: true
+    users:
+      default_theme: dark
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+  additionalDataSources:
+    - name: Jaeger
+      type: jaeger
+      uid: jaeger
+      access: proxy
+      url: http://tracing.istio-system.svc.cluster.local:80/jaeger
+  resources:
+    requests: {cpu: 50m, memory: 200Mi}
+    limits: {memory: 500Mi}
+
+prometheusOperator:
+  resources:
+    requests: {cpu: 50m, memory: 100Mi}
+
+kube-state-metrics:
+  resources:
+    requests: {cpu: 20m, memory: 64Mi}
+
+prometheus-node-exporter:
+  resources:
+    requests: {cpu: 20m, memory: 32Mi}

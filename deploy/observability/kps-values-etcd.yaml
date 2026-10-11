@@ -1,0 +1,24 @@
+# Opt-in (ETCD_METRICS=true): scrape an EXTERNAL etcd cluster (as in kubeadm "external etcd" topology).
+# The endpoints come from --set kubeEtcd.endpoints[i]=... in scripts/10-observability.sh.
+# Needs the secret "etcd-client" (ca.crt, tls.crt, tls.key) in the observability namespace:
+#   scripts/etcd-client-secret.sh   (reads the apiserver's etcd client cert on a control-plane node)
+kubeEtcd:
+  enabled: true
+  service:
+    enabled: true
+    port: 2379
+    targetPort: 2379
+  serviceMonitor:
+    enabled: true
+    scheme: https
+    insecureSkipVerify: false
+    serverName: ""
+    caFile: /etc/prometheus/secrets/etcd-client/ca.crt
+    certFile: /etc/prometheus/secrets/etcd-client/tls.crt
+    keyFile: /etc/prometheus/secrets/etcd-client/tls.key
+defaultRules:
+  rules:
+    etcd: true
+prometheus:
+  prometheusSpec:
+    secrets: [etcd-client]

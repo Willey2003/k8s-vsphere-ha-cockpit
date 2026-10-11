@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kube-hostfail"
+version = "0.1.0"
+description = "Would your Kubernetes cluster survive the loss of one ESXi host? Read-only vSphere + Kubernetes HA auditor."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+dependencies = [
+  "pyvmomi>=8.0",
+  "kubernetes>=29.0",
+  "prometheus-client>=0.20",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+kube-hostfail = "hostfail.cli:main"
+
+[tool.setuptools]
+packages = ["hostfail"]

@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: launcher
+  namespace: ${NS_SYS}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cockpit-launcher-read
+rules:
+  - apiGroups: [gateway.networking.k8s.io]
+    resources: [httproutes]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cockpit-launcher-read
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: cockpit-launcher-read}
+subjects:
+  - {kind: ServiceAccount, name: launcher, namespace: ${NS_SYS}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: launcher
+  namespace: ${NS_SYS}
+  labels: {app: launcher}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: launcher}}
+  template:
+    metadata:
+      labels: {app: launcher}
+    spec:
+      serviceAccountName: launcher
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: launcher
+          image: python:3.12-alpine
+          command: [python, -u, /app/app.py]
+          env:
+            - {name: GATEWAY_URL, value: "${GATEWAY_INTERNAL_URL}"}
+            - {name: LAUNCHER_TITLE, value: "HA Cockpit"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}}
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {memory: 128Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: launcher-code}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: launcher
+  namespace: ${NS_SYS}
+spec:
+  selector: {app: launcher}
+  ports: [{name: http, port: 80, targetPort: http}]

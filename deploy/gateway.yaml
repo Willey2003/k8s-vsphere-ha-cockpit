@@ -1,0 +1,17 @@
+# GATEWAY_MODE=own : one Gateway, served by Istio, listener open to routes from every namespace.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ${GATEWAY_NAME}
+  namespace: ${GATEWAY_NAMESPACE}
+  annotations:
+    networking.istio.io/service-type: ${GATEWAY_SERVICE_TYPE}
+spec:
+  gatewayClassName: istio
+${LB_ANNOTATIONS}
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces: {from: All}

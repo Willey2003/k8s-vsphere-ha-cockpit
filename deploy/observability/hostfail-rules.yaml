@@ -1,0 +1,52 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kube-hostfail
+  labels: {app.kubernetes.io/part-of: ha-cockpit}
+spec:
+  groups:
+    - name: kube-hostfail
+      rules:
+        - alert: HostfailSingleHostIsSPOF
+          expr: hostfail_single_points_of_failure > 0
+          for: 5m
+          labels: {severity: critical}
+          annotations:
+            summary: "Losing one ESXi host would take the Kubernetes cluster down"
+            description: "{{ $value }} ESXi host(s) are single points of failure (etcd quorum or every apiserver lost). Open /hostfail/ for the placement and the suggested DRS rule."
+        - alert: HostfailEtcdQuorumAtRisk
+          expr: hostfail_host_failure_etcd_quorum_survives == 0
+          for: 5m
+          labels: {severity: critical}
+          annotations:
+            summary: "etcd loses quorum if {{ $labels.esxi_host }} fails"
+        - alert: HostfailAppsDownOnHostLoss
+          expr: hostfail_host_failure_workloads_down > 0
+          for: 15m
+          labels: {severity: warning}
+          annotations:
+            summary: "{{ $value }} workload(s) lose every ready replica if {{ $labels.esxi_host }} fails"
+        - alert: HostfailDrsAntiAffinityMissing
+          expr: hostfail_drs_antiaffinity_missing == 1
+          for: 15m
+          labels: {severity: warning}
+          annotations:
+            summary: "No enabled DRS anti-affinity rule covers the {{ $labels.group }} VMs ({{ $labels.status }})"
+        - alert: HostfailEtcdMemberMoved
+          expr: count(hostfail_etcd_member_placement unless hostfail_etcd_member_placement offset 10m) > 0
+          for: 1m
+          labels: {severity: info}
+          annotations:
+            summary: "An etcd member changed ESXi host in the last 10 minutes (vMotion/DRS)"
+        - alert: HostfailScanFailing
+          expr: hostfail_last_scan_success == 0
+          for: 10m
+          labels: {severity: warning}
+          annotations:
+            summary: "kube-hostfail cannot read vCenter or the Kubernetes API"
+        - alert: HostfailUnmappedObjects
+          expr: hostfail_unmapped_objects > 0
+          for: 30m
+          labels: {severity: info}
+          annotations:
+            summary: "{{ $value }} node(s)/etcd member(s) could not be matched to a vCenter VM (check VMware Tools or HOSTFAIL_VM_MAP)"

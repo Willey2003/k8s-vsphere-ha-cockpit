@@ -1,0 +1,247 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${NS_DEMO}
+  labels:
+    istio-injection: enabled
+    app.kubernetes.io/part-of: ha-cockpit
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: ${NS_DEMO}
+  labels: {app: frontend, version: v1}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: frontend, version: v1}}
+  template:
+    metadata:
+      labels: {app: frontend, version: v1}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: {matchLabels: {app: frontend}}
+      containers:
+        - name: frontend
+          image: python:3.12-alpine
+          command: [python, -u, /app/shop.py]
+          env:
+            - {name: ROLE, value: "frontend"}
+            - {name: VERSION, value: "v1"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: shop-code}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: ${NS_DEMO}
+  labels: {app: frontend}
+spec:
+  selector: {app: frontend}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend
+  namespace: ${NS_DEMO}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {app: frontend}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog
+  namespace: ${NS_DEMO}
+  labels: {app: catalog, version: v1}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: catalog, version: v1}}
+  template:
+    metadata:
+      labels: {app: catalog, version: v1}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: {matchLabels: {app: catalog}}
+      containers:
+        - name: catalog
+          image: python:3.12-alpine
+          command: [python, -u, /app/shop.py]
+          env:
+            - {name: ROLE, value: "catalog"}
+            - {name: VERSION, value: "v1"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: shop-code}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog
+  namespace: ${NS_DEMO}
+  labels: {app: catalog}
+spec:
+  selector: {app: catalog}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: catalog
+  namespace: ${NS_DEMO}
+spec:
+  minAvailable: 1
+  selector: {matchLabels: {app: catalog}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-v1
+  namespace: ${NS_DEMO}
+  labels: {app: pricing, version: v1}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: pricing, version: v1}}
+  template:
+    metadata:
+      labels: {app: pricing, version: v1}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: {matchLabels: {app: pricing}}
+      containers:
+        - name: pricing
+          image: python:3.12-alpine
+          command: [python, -u, /app/shop.py]
+          env:
+            - {name: ROLE, value: "pricing"}
+            - {name: VERSION, value: "v1"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: shop-code}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-v2
+  namespace: ${NS_DEMO}
+  labels: {app: pricing, version: v2}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: pricing, version: v2}}
+  template:
+    metadata:
+      labels: {app: pricing, version: v2}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: {matchLabels: {app: pricing}}
+      containers:
+        - name: pricing
+          image: python:3.12-alpine
+          command: [python, -u, /app/shop.py]
+          env:
+            - {name: ROLE, value: "pricing"}
+            - {name: VERSION, value: "v2"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+            - {name: LATENCY_MS, value: "400"}
+            - {name: FAIL_RATE, value: "0.15"}
+          ports: [{name: http, containerPort: 8080}]
+          readinessProbe: {httpGet: {path: /healthz, port: http}}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: shop-code}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pricing
+  namespace: ${NS_DEMO}
+  labels: {app: pricing}
+spec:
+  selector: {app: pricing}
+  ports: [{name: http, port: 8080, targetPort: http}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgen
+  namespace: ${NS_DEMO}
+  labels: {app: loadgen, version: v1}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: loadgen, version: v1}}
+  template:
+    metadata:
+      labels: {app: loadgen, version: v1}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 65534, seccompProfile: {type: RuntimeDefault}}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector: {matchLabels: {app: loadgen}}
+      containers:
+        - name: loadgen
+          image: python:3.12-alpine
+          command: [python, -u, /app/shop.py]
+          env:
+            - {name: ROLE, value: "loadgen"}
+            - {name: VERSION, value: "v1"}
+            - {name: PYTHONDONTWRITEBYTECODE, value: "1"}
+            - {name: TARGET, value: "http://frontend:8080/shop/"}
+            - {name: RPS, value: "2"}
+          resources:
+            requests: {cpu: 10m, memory: 24Mi}
+            limits: {memory: 96Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          volumeMounts: [{name: code, mountPath: /app, readOnly: true}]
+      volumes:
+        - name: code
+          configMap: {name: shop-code}

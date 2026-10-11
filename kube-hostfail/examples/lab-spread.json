@@ -1,0 +1,852 @@
+{
+ "cluster_name": "lab",
+ "k8s": {
+  "nodes": [
+   {
+    "metadata": {
+     "name": "k8s-manager-1",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-manager-1",
+      "node-role.kubernetes.io/control-plane": ""
+     }
+    },
+    "spec": {
+     "unschedulable": false,
+     "taints": [
+      {
+       "key": "node-role.kubernetes.io/control-plane",
+       "effect": "NoSchedule"
+      }
+     ]
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.14"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-manager-1"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-manager-2",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-manager-2",
+      "node-role.kubernetes.io/control-plane": ""
+     }
+    },
+    "spec": {
+     "unschedulable": false,
+     "taints": [
+      {
+       "key": "node-role.kubernetes.io/control-plane",
+       "effect": "NoSchedule"
+      }
+     ]
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.21"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-manager-2"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-manager-3",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-manager-3",
+      "node-role.kubernetes.io/control-plane": ""
+     }
+    },
+    "spec": {
+     "unschedulable": false,
+     "taints": [
+      {
+       "key": "node-role.kubernetes.io/control-plane",
+       "effect": "NoSchedule"
+      }
+     ]
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.22"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-manager-3"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-worker-1",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-worker-1"
+     }
+    },
+    "spec": {
+     "unschedulable": false
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.15"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-worker-1"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-worker-2",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-worker-2"
+     }
+    },
+    "spec": {
+     "unschedulable": false
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.16"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-worker-2"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-worker-3",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-worker-3"
+     }
+    },
+    "spec": {
+     "unschedulable": false
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.17"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-worker-3"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "name": "k8s-worker-4",
+     "labels": {
+      "kubernetes.io/hostname": "k8s-worker-4"
+     }
+    },
+    "spec": {
+     "unschedulable": false
+    },
+    "status": {
+     "addresses": [
+      {
+       "type": "InternalIP",
+       "address": "10.10.1.18"
+      },
+      {
+       "type": "Hostname",
+       "address": "k8s-worker-4"
+      }
+     ],
+     "allocatable": {
+      "cpu": "4",
+      "memory": "8Gi"
+     },
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   }
+  ],
+  "pods": [
+   {
+    "metadata": {
+     "namespace": "kube-system",
+     "name": "kube-apiserver-k8s-manager-1",
+     "labels": {
+      "component": "kube-apiserver",
+      "tier": "control-plane"
+     },
+     "ownerReferences": [
+      {
+       "kind": "Node",
+       "name": "k8s-manager-1"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-manager-1",
+     "containers": [
+      {
+       "name": "kube-apiserver",
+       "command": [
+        "kube-apiserver",
+        "--secure-port=6443",
+        "--etcd-servers=https://10.10.1.12:2379,https://10.10.1.13:2379,https://10.10.1.19:2379"
+       ]
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "kube-system",
+     "name": "kube-apiserver-k8s-manager-2",
+     "labels": {
+      "component": "kube-apiserver",
+      "tier": "control-plane"
+     },
+     "ownerReferences": [
+      {
+       "kind": "Node",
+       "name": "k8s-manager-2"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-manager-2",
+     "containers": [
+      {
+       "name": "kube-apiserver",
+       "command": [
+        "kube-apiserver",
+        "--secure-port=6443",
+        "--etcd-servers=https://10.10.1.12:2379,https://10.10.1.13:2379,https://10.10.1.19:2379"
+       ]
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "kube-system",
+     "name": "kube-apiserver-k8s-manager-3",
+     "labels": {
+      "component": "kube-apiserver",
+      "tier": "control-plane"
+     },
+     "ownerReferences": [
+      {
+       "kind": "Node",
+       "name": "k8s-manager-3"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-manager-3",
+     "containers": [
+      {
+       "name": "kube-apiserver",
+       "command": [
+        "kube-apiserver",
+        "--secure-port=6443",
+        "--etcd-servers=https://10.10.1.12:2379,https://10.10.1.13:2379,https://10.10.1.19:2379"
+       ]
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "frontend-7d9f-0",
+     "labels": {
+      "app": "frontend"
+     },
+     "ownerReferences": [
+      {
+       "kind": "ReplicaSet",
+       "name": "frontend-7d9f"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-worker-1",
+     "containers": [
+      {
+       "name": "c"
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "frontend-7d9f-1",
+     "labels": {
+      "app": "frontend"
+     },
+     "ownerReferences": [
+      {
+       "kind": "ReplicaSet",
+       "name": "frontend-7d9f"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-worker-2",
+     "containers": [
+      {
+       "name": "c"
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "catalog-7d9f-0",
+     "labels": {
+      "app": "catalog"
+     },
+     "ownerReferences": [
+      {
+       "kind": "ReplicaSet",
+       "name": "catalog-7d9f"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-worker-1",
+     "containers": [
+      {
+       "name": "c"
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "catalog-7d9f-1",
+     "labels": {
+      "app": "catalog"
+     },
+     "ownerReferences": [
+      {
+       "kind": "ReplicaSet",
+       "name": "catalog-7d9f"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-worker-4",
+     "containers": [
+      {
+       "name": "c"
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "pricing-7d9f-0",
+     "labels": {
+      "app": "pricing"
+     },
+     "ownerReferences": [
+      {
+       "kind": "ReplicaSet",
+       "name": "pricing-7d9f"
+      }
+     ]
+    },
+    "spec": {
+     "nodeName": "k8s-worker-3",
+     "containers": [
+      {
+       "name": "c"
+      }
+     ]
+    },
+    "status": {
+     "phase": "Running",
+     "hostIP": "",
+     "conditions": [
+      {
+       "type": "Ready",
+       "status": "True"
+      }
+     ]
+    }
+   }
+  ],
+  "replicasets": [
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "frontend-7d9f",
+     "ownerReferences": [
+      {
+       "kind": "Deployment",
+       "name": "frontend"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "catalog-7d9f",
+     "ownerReferences": [
+      {
+       "kind": "Deployment",
+       "name": "catalog"
+      }
+     ]
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "pricing-7d9f",
+     "ownerReferences": [
+      {
+       "kind": "Deployment",
+       "name": "pricing"
+      }
+     ]
+    }
+   }
+  ],
+  "deployments": [
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "frontend"
+    },
+    "spec": {
+     "replicas": 2,
+     "selector": {
+      "matchLabels": {
+       "app": "frontend"
+      }
+     },
+     "template": {
+      "metadata": {
+       "labels": {
+        "app": "frontend"
+       }
+      },
+      "spec": {
+       "containers": [
+        {
+         "name": "c",
+         "resources": {
+          "requests": {
+           "cpu": "250m",
+           "memory": "256Mi"
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "catalog"
+    },
+    "spec": {
+     "replicas": 2,
+     "selector": {
+      "matchLabels": {
+       "app": "catalog"
+      }
+     },
+     "template": {
+      "metadata": {
+       "labels": {
+        "app": "catalog"
+       }
+      },
+      "spec": {
+       "containers": [
+        {
+         "name": "c",
+         "resources": {
+          "requests": {
+           "cpu": "250m",
+           "memory": "256Mi"
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "pricing"
+    },
+    "spec": {
+     "replicas": 1,
+     "selector": {
+      "matchLabels": {
+       "app": "pricing"
+      }
+     },
+     "template": {
+      "metadata": {
+       "labels": {
+        "app": "pricing"
+       }
+      },
+      "spec": {
+       "containers": [
+        {
+         "name": "c",
+         "resources": {
+          "requests": {
+           "cpu": "250m",
+           "memory": "256Mi"
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  ],
+  "statefulsets": [],
+  "pdbs": [
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "frontend-pdb"
+    },
+    "spec": {
+     "minAvailable": 1,
+     "selector": {
+      "matchLabels": {
+       "app": "frontend"
+      }
+     }
+    }
+   },
+   {
+    "metadata": {
+     "namespace": "shop",
+     "name": "catalog-pdb"
+    },
+    "spec": {
+     "minAvailable": 1,
+     "selector": {
+      "matchLabels": {
+       "app": "catalog"
+      }
+     }
+    }
+   }
+  ],
+  "leases": [
+   {
+    "metadata": {
+     "name": "plndr-cp-lock",
+     "namespace": "kube-system"
+    },
+    "spec": {
+     "holderIdentity": "k8s-manager-1"
+    }
+   }
+  ]
+ },
+ "vsphere": {
+  "hosts": [
+   {
+    "name": "esx001.corp.example",
+    "cluster": "LAB-CL01",
+    "connection_state": "connected",
+    "in_maintenance": false
+   },
+   {
+    "name": "esx002.corp.example",
+    "cluster": "LAB-CL01",
+    "connection_state": "connected",
+    "in_maintenance": false
+   },
+   {
+    "name": "esx003.corp.example",
+    "cluster": "LAB-CL01",
+    "connection_state": "connected",
+    "in_maintenance": false
+   }
+  ],
+  "vms": [
+   {
+    "name": "etcd-1",
+    "esxi_host": "esx001.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "etcd-1.corp.example",
+    "ips": [
+     "10.10.1.12"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "etcd-2",
+    "esxi_host": "esx002.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "etcd-2.corp.example",
+    "ips": [
+     "10.10.1.13"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "etcd-3",
+    "esxi_host": "esx003.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "etcd-3.corp.example",
+    "ips": [
+     "10.10.1.19"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-MANAGER-1",
+    "esxi_host": "esx001.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-manager-1.corp.example",
+    "ips": [
+     "10.10.1.14"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-MANAGER-2",
+    "esxi_host": "esx002.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-manager-2.corp.example",
+    "ips": [
+     "10.10.1.21"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-MANAGER-3",
+    "esxi_host": "esx003.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-manager-3.corp.example",
+    "ips": [
+     "10.10.1.22"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-WORKER-1",
+    "esxi_host": "esx001.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-worker-1.corp.example",
+    "ips": [
+     "10.10.1.15"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-WORKER-2",
+    "esxi_host": "esx002.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-worker-2.corp.example",
+    "ips": [
+     "10.10.1.16"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-WORKER-3",
+    "esxi_host": "esx003.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-worker-3.corp.example",
+    "ips": [
+     "10.10.1.17"
+    ],
+    "cluster": "LAB-CL01"
+   },
+   {
+    "name": "K8S-WORKER-4",
+    "esxi_host": "esx001.corp.example",
+    "power_state": "poweredOn",
+    "guest_hostname": "k8s-worker-4.corp.example",
+    "ips": [
+     "10.10.1.18"
+    ],
+    "cluster": "LAB-CL01"
+   }
+  ],
+  "drs_rules": []
+ }
+}

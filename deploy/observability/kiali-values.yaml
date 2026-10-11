@@ -1,0 +1,26 @@
+# Kiali server (read-only, anonymous - lab setup; put it behind your own auth for anything shared).
+fullnameOverride: kiali
+auth:
+  strategy: anonymous
+deployment:
+  view_only_mode: true
+  ingress_enabled: false
+  namespace: istio-system
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+server:
+  web_root: /kiali
+external_services:
+  prometheus:
+    url: http://kps-prometheus.cockpit-observability.svc.cluster.local:9090/prometheus
+  grafana:
+    enabled: true
+    internal_url: http://kps-grafana.cockpit-observability.svc.cluster.local:80/grafana
+    external_url: /grafana
+  tracing:
+    enabled: true
+    internal_url: http://tracing.istio-system.svc.cluster.local:16685/jaeger
+    use_grpc: true
+    external_url: /jaeger
+  istio:
+    root_namespace: istio-system
